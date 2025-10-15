@@ -29,12 +29,12 @@ $pokemons = $stmt->fetchAll();
             </tr>
         </thead>
         <tbody>
-        <?php foreach ($pokemon as $pokemon): ?>
+        <?php foreach ($pokemons as $pokemon): ?>
         <tr>
             <td><?= htmlspecialchars($pokemon['id']) ?></td>
             <td><?= htmlspecialchars($pokemon['name'])?></td>
             <td><?= htmlspecialchars($pokemon['type']) ?></td>
-            <td><?= $pokemon['caught'] ? 'Ja' : 'Nein' ?></td>
+            <td><?= $pokemon['caught'] ? 'yes' : 'no' ?></td>
             <td class="actions">
                 <a href="index.php?action=edit&id=<?= $pokemon['id'] ?>">Edit</a>
                 <a href="index.php?action=delete&id=<?= $pokemon['id'] ?>" onclick="return confirm('You sure?🦍')">Delete</a>
