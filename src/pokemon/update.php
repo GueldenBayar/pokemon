@@ -43,6 +43,20 @@ if (!$id) {
 $stmt = $pdo->prepare("SELECT * FROM pokemon WHERE id = ?");
 $stmt->execute([$id]);
 $pokemon = $stmt->fetch();
+
+$pokemon_types = [];
+try {
+    //SQL-Befehl, type daten abfragen
+    $stmt_types = $pdo->query("SHOW COLUMNS FROM pokemon WHERE Field = 'type'");
+    $column_info =$stmt_types->fetch(PDO::FETCH_ASSOC);
+
+    if (preg_match_all("/'([^']+)'/", $column_info['Type'], $matches)) {
+        $pokemon_types = $matches[1];
+    }
+} catch (Exception $e) {
+    error_log("Failed to load Pokemon Types!" . $e->getMessage());
+}
+
 ?>
 
 <!doctype html>
@@ -65,8 +79,15 @@ $pokemon = $stmt->fetch();
             <input type="text" name="name" id="name" value="<?= htmlspecialchars($pokemon['name']) ?>" required>
         </p>
         <p>
-            <label for="type">Typ:</label>
-            <input type="text" name="type" id="type" value="<?= htmlspecialchars($pokemon['type']) ?>" required>
+            <label for="type">Type:</label>
+            <select name="type" id="type" required>
+                <?php foreach ($pokemon_types as $type): ?>
+                <option value="<?= htmlspecialchars($type) ?>">
+                    <?= ($pokemon['type'] === $type) ? 'selected' : '' ?>
+                    <?= htmlspecialchars($type) ?>
+                </option>
+                <?php endforeach; ?>
+            </select>
         </p>
         <p>
             <label for="caught">Caught?</label>
@@ -77,6 +98,5 @@ $pokemon = $stmt->fetch();
         </button>
 
     </form>
-
 </body>
 </html>

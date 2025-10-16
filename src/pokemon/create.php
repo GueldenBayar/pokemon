@@ -4,17 +4,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     //Schreib-Befehl für meine DB, neuer Eintrag mit name, type, caught, Fragezeichen sind Platzhalter -> da kommen später echte Daten rein
     $sql = "INSERT INTO pokemon (name, type, caught) VALUES (?, ?, ?)";
     $stmt = $pdo->prepare($sql);
-
     $caught = isset($_POST['caught']) ? 1 : 0;
+    $pokemon_name = htmlspecialchars($_POST['name']);
+     try {
+         //$stmt abfeuern, daten werden eingetragen
+         $stmt->execute([$_POST['name'], $_POST['type'], $caught]);
+         $_SESSION['message'] = '🎉 Pokémon "' . htmlspecialchars($_POST['name']) . '" erfolgreich erstellt!';
+         header("Location: index.php?action=read");
+         exit();
+     } catch (PDOException $e) {
+         $_SESSION['error'] = 'Fehler beim Speichern von "' . $pokemon_name .'": ' . $e->getMessage();
 
-    //jetzt werden die Daten eingetragen
-    $stmt->execute([$_POST['name'], $_POST['type'], $caught]);
-
-    //Nach dem Speichern zurück zur Hauptseite
-    header("Location: index.php");
-    exit();
+         header("Location: index.php?action=create");
+         exit();
+     }
 }
 
+$pokemon_types = [];
+//abrufen aller erlaubten Werte für die Spalte 'type' aus der Datenbank
+try {
+    //Dieser SQL Befehl ist Standard, um ENUM-Werte abzurufen
+    //Er liefert eine Beschreibung der Spalte 'type'
+    $stmt = $pdo->query("SHOW COLUMNS FROM pokemon WHERE Field='type'");
+    $column_info = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    //ENUM String sieht etwa so aus "enum('normal', 'fire', 'water')"
+    $enum_string = $column_info['Type'];
+
+    //Klammern, Anführungszeichen entfernen, um ein Array für Type zu erhalten
+    preg_match_all("/'([^']+)'/", $enum_string, $matches);
+    $pokemon_types = $matches[1] ?? [];
+} catch (PDOException $e) {
+    //Falls Datenbankverbindung fehlschlägt
+    $pokemon_types = ['Error: Database failed to load types'];
+    error_log("Failed to load Pokemon types: " . $e->getMessage());
+}
 //wenn das formular noch nicht abgeschickt wurde, zeigt es HTML an
 ?>
 
@@ -40,25 +64,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <p>
             <label for="type">Type:</label>
             <select name="type" id="type" required>
-                <option value="">-- choose type --</option>
-                <option value="Normal">Normal</option>
-                <option value="Fire">Fire</option>
-                <option value="Water">Water</option>
-                <option value="Grass">Grass</option>
-                <option value="Electric">Electric</option>
-                <option value="Ice">Ice</option>
-                <option value="Fighting">Fighting</option>
-                <option value="Poison">Poison</option>
-                <option value="Ground">Ground</option>
-                <option value="Flying">Flying</option>
-                <option value="Psychic">Psychic</option>
-                <option value="Bug">Bug</option>
-                <option value="Rock">Rock</option>
-                <option value="Ghost">Ghost</option>
-                <option value="Dragon">Dragon</option>
-                <option value="Dark">Dark</option>
-                <option value="Steel">Steel</option>
-                <option value="Fairy">Fairy</option>
+                <?php foreach ($pokemon_types as $type): ?>
+                <option value="<?= htmlspecialchars($type) ?>">
+                    <?= htmlspecialchars($type) ?>
+                </option>
+                <?php endforeach; ?>
             </select>
         </p>
 

@@ -22,7 +22,8 @@
 
 
 <?php
-
+//Muss vor jeder Ausgabe geschehen!
+session_start();
 //for debugging display this:
 //ini_set('display_errors', 1);
 //ini_set('display_startup_errors', 1);
