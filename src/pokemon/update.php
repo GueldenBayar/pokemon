@@ -2,13 +2,35 @@
 //holt zuerst die Daten des zu bearbeitenden Pokemon (GET) und speichert dann die Änderungen (POST)
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    //1. Prüfen, ob alle notwendigen Keys vorhanden sind
+    if (!isset($_POST['name'], $_POST['type'], $_POST['id'])) {
+        //Fehlermeldung, falls ein Wert fehlt
+        die("Error: Name, Type or ID is missing!!!");
+    }
+
+
     $sql = "UPDATE pokemon SET name = ?, type = ?, caught = ? WHERE id = ?";
     $stmt = $pdo->prepare($sql);
-    $caught = isset($_POST['caught']) ? 1 : 0;
-    $stmt->execute([$_POST['name'], $_POST['type'], $caught, $_POST['id']]);
 
-    header("Location: index.php");
-    exit();
+    //Wert für caught korrekt ermitteln
+    //wenn checkbox angekreuzt -> name im POST gesendet, sonst nicht
+    $caught = isset($_POST['caught']) ? 1 : 0;
+
+    try {
+        $stmt->execute([
+                $_POST['name'],
+                $_POST['type'],
+                $caught,
+                $_POST['id']
+        ]);
+
+        //auf Lese-Seite umleiten
+        header("Location: index.php?action=read");
+        exit();
+    } catch (PDOException $e) {
+        //bei Datenbank Fehlern, zB falscher Type-Wert
+        die("Fehler beim Speichern: " . $e->getMessage());;
+    }
 }
 
 //Hole die ID aus der URL und lade die Daten des Pokemon
@@ -41,6 +63,14 @@ $pokemon = $stmt->fetch();
         <p>
             <label for="name">Name:</label>
             <input type="text" name="name" id="name" value="<?= htmlspecialchars($pokemon['name']) ?>" required>
+        </p>
+        <p>
+            <label for="type">Typ:</label>
+            <input type="text" name="type" id="type" value="<?= htmlspecialchars($pokemon['type']) ?>" required>
+        </p>
+        <p>
+            <label for="caught">Caught?</label>
+            <input type="checkbox" name="caught" id="caught" <?= $pokemon['caught'] ? 'checked' : '' ?>>
         </p>
         <button type="submit">
             Save Changes

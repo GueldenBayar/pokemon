@@ -20,6 +20,7 @@
 <body>
     <div class="welcome">
         <h1>Willkommen bei den Pokemons</h1>
+        <img style="width: 50px; height: 50px;" src="pokeball.png" alt="">
         <p>Hier kannst du alle deine Pokemons verwalten.</p>
     </div>
 

@@ -22,13 +22,20 @@
 
 
 <?php
+
+//for debugging display this:
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
+
+
 //mein Controller the one and only
 
 require_once __DIR__ . '/../config/config.php';
 
 //entscheiden welche Aktion ausgeführt werden soll anhand URL Parameters
 
-$action =$_GET['action'] ?? 'home'; //meine Standardaktion ist read
+$action =$_GET['action'] ?? 'home'; //meine Standardaktion ist home
 
 switch ($action) {
     case 'read':
