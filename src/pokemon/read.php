@@ -28,6 +28,10 @@ $pokemons = $stmt->fetchAll();
         tr:nth-child(even) {
             background-color: #dddddd;
         }
+
+        tr:hover {
+            background-color: #e1d6e8;
+        }
     </style>
 </head>
 <body>
