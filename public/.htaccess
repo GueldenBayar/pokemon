@@ -1,0 +1,15 @@
+DirectoryIndex index.php
+RewriteEngine On
+RewriteBase /
+
+# existierende Dateien/Ordner nicht umschreiben
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# alle anderen URLs an index.php weiterleiten als ?url=...
+RewriteRule ^(.*)$ index.php?url=$1 [L,QSA]
+
+
+
+#RewriteRule ^employee/update/([0-9]+)$ firstupdate.php?id=$1 [L,QSA]
+#RewriteRule ^employee/delete/([0-9]+)$ firstdelete.php?id=$1 [L,QSA]
