@@ -1,27 +1,30 @@
-<!doctype html>
-<html lang="en">
-<head><meta charset="UTF-8"><title><?= isset($pokemon) ? 'Edit' : 'Create' ?> Pokémon</title></head>
-<body>
-<h1><?= isset($pokemon) ? 'Edit' : 'Create' ?> Pokémon</h1>
+<?php
+$isEdit = isset($pokemon);
+$action = $isEdit ? '/pokemon/src/pokemon/update.php' : '/pokemon/src/pokemon/create.php';
+?>
 
-<form method="post" action="/pokemon/<?= isset($pokemon) ? 'update' : 'create' ?>">
+<h1><?= $isEdit ? 'Edit Pokémon' : 'Add Pokémon' ?></h1>
 
-    <?php if (isset($pokemon)): ?>
+<form method="post" action="<?= $action ?>" class="pokemon-form">
+    <?php if ($isEdit): ?>
         <input type="hidden" name="id" value="<?= htmlspecialchars($pokemon['id']) ?>">
     <?php endif; ?>
 
-    <label>Name:</label><br>
-    <input type="text" name="name" required value="<?= $pokemon['name'] ?? '' ?>"><br>
+    <label>
+        Name:
+        <input type="text" name="name" value="<?= htmlspecialchars($pokemon['name'] ?? '') ?>" required>
+    </label>
 
-    <label>Type:</label><br>
-    <input type="text" name="type" required value="<?= $pokemon['type'] ?? '' ?>"><br>
+    <label>
+        Type:
+        <input type="text" name="type" value="<?= htmlspecialchars($pokemon['type'] ?? '') ?>" required>
+    </label>
 
-    <label>Caught:</label>
-    <input type="checkbox" name="caught" <?= !empty($pokemon['caught']) ? 'checked' : '' ?>><br><br>
+    <label class="checkbox">
+        <input type="checkbox" name="caught" <?= !empty($pokemon['caught']) ? 'checked' : '' ?>>
+        Caught
+    </label>
 
-    <button type="submit"><?= isset($pokemon) ? 'Update' : 'Create' ?></button>
+    <input type="submit" value="<?= $isEdit ? 'Update' : 'Add' ?>">
+    <a href="/pokemon/public/index.php" class="button">Back</a>
 </form>
-
-<p><a href="../public/index.php">← Back</a></p>
-</body>
-</html>

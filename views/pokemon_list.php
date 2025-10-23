@@ -1,19 +1,21 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>PokéMoN</title>
-</head>
-<body>
+<?php include __DIR__ . '/header.php';?>
+
 <h1>PokéMoN</h1>
 
-<p>
-    <a href="/pokemon/create">Add Pokémon</a> |
-    <a href="/pokemon/import">Import Pokémon</a>
-</p>
+<a href="/public/index.php?path=create" class="button">Add Pokémon</a>
 
-<table border="1" cellpadding="5">
-    <tr><th>ID</th><th>Name</th><th>Type</th><th>Caught</th><th>Actions</th></tr>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Caught</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php if (!empty($pokemons)): ?>
     <?php foreach ($pokemons as $p): ?>
         <tr>
             <td><?= htmlspecialchars($p['id']) ?></td>
@@ -21,11 +23,15 @@
             <td><?= htmlspecialchars($p['type']) ?></td>
             <td><?= $p['caught'] ? '✅' : '❌' ?></td>
             <td>
-                <a href="/pokemon/edit/<?= $p['id'] ?>">Edit</a> |
-                <a href="/pokemon/delete/<?= $p['id'] ?>" onclick="return confirm('Delete this Pokémon?')">Delete</a>
+                <a href="/pokemon/public/index.php?path=edit/<?= $p['id'] ?>" class="button">Edit</a>
+                <a href="/src/pokemon/delete.php?id=<?= $p['id'] ?>" class="button" style="background:#dc3545;">Delete</a>
             </td>
         </tr>
     <?php endforeach; ?>
+    <?php else: ?>
+    <tr>
+        <td colspan="5">No Pokemon found.</td>
+    </tr>
+    <?php endif; ?>
+    </tbody>
 </table>
-</body>
-</html>
