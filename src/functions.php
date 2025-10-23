@@ -1,7 +1,9 @@
 <?php
 function findAllPokemons(PDO $pdo): array {
-    return $pdo->query("SELECT * FROM pokemon ORDER BY id ASC")->fetchAll();
+    $stmt = $pdo->query("SELECT * FROM pokemon ORDER BY id ASC");
+    return $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
 }
+
 
 function findPokemonById(PDO $pdo, int $id): array {
     $stmt = $pdo->prepare("SELECT * FROM pokemon WHERE id = ?");
